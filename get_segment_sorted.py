@@ -30,7 +30,7 @@ import random
 from random import choice
 import shutil
 import os
-
+import itertools
 shutil.rmtree('/Users/xuchangmao/Documents/工作/代码/urban')
 shutil.rmtree('/Users/xuchangmao/Documents/工作/代码/sub')
 shutil.rmtree('/Users/xuchangmao/Documents/工作/代码/high')
@@ -224,7 +224,6 @@ urban_criteria_time = criteria_time * urban_criteria * 3600
 sub_criteria_time = criteria_time * sub_criteria * 3600
 high_criteria_time = criteria_time * high_criteria * 3600
 
-
 #接下来是对选择出来的片段进行排序，按照片段时长从小到大的的顺序进行排序，将片段作为
 #key,将时长作为value，组合成一个dict,然后按照value的值进行排序处理，最后形成时长
 #从小到大的片段序列。
@@ -234,6 +233,11 @@ sub_time_span_dict=dict(zip(sub_list,sub_time_span))
 sub_list=sorted(sub_time_span_dict, key=lambda k: sub_time_span_dict[k])
 high_time_span_dict=dict(zip(high_list,high_time_span))
 high_list=sorted(high_time_span_dict, key=lambda k: high_time_span_dict[k])
+#排序完成后开始进行选择，
+#选择的方式需要考虑，到这里3个list按照时长进行的排序已经完成了
+#上面的排序是为了方便以后进行特定的片段选择
+#接下来的话可以采用
+
 #这是原来的筛选方式，随机选择，然后补充进去。
 # urban_time = get_cum_time(pems_urban_list)
 # while urban_time < urban_criteria_time:
