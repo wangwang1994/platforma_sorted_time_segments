@@ -223,25 +223,30 @@ criteria_time = 1.8
 urban_criteria_time = criteria_time * urban_criteria * 3600
 sub_criteria_time = criteria_time * sub_criteria * 3600
 high_criteria_time = criteria_time * high_criteria * 3600
-# 接下来是不断地往3个区间中放
 
 
-
-
-
-
-urban_time = get_cum_time(pems_urban_list)
-while urban_time < urban_criteria_time:
-    pems_urban_list.append(choice(urban_list))
-    urban_time = get_cum_time(pems_urban_list)
-sub_time = get_cum_time(pems_sub_list)
-while sub_time < sub_criteria_time:
-    pems_sub_list.append(choice(sub_list))
-    sub_time = get_cum_time(pems_sub_list)
-high_time = get_cum_time(pems_high_list)
-while high_time < high_criteria_time:
-    pems_high_list.append(choice(high_list))
-    high_time = get_cum_time(pems_high_list)
+#接下来是对选择出来的片段进行排序，按照片段时长从小到大的的顺序进行排序，将片段作为
+#key,将时长作为value，组合成一个dict,然后按照value的值进行排序处理，最后形成时长
+#从小到大的片段序列。
+urban_time_span_dict=dict(zip(urban_list,urban_time_span))
+urban_list=sorted(urban_time_span_dict, key=lambda k: urban_time_span_dict[k])
+sub_time_span_dict=dict(zip(sub_list,sub_time_span))
+sub_list=sorted(sub_time_span_dict, key=lambda k: sub_time_span_dict[k])
+high_time_span_dict=dict(zip(high_list,high_time_span))
+high_list=sorted(high_time_span_dict, key=lambda k: high_time_span_dict[k])
+#这是原来的筛选方式，随机选择，然后补充进去。
+# urban_time = get_cum_time(pems_urban_list)
+# while urban_time < urban_criteria_time:
+#     pems_urban_list.append(choice(urban_list))
+#     urban_time = get_cum_time(pems_urban_list)
+# sub_time = get_cum_time(pems_sub_list)
+# while sub_time < sub_criteria_time:
+#     pems_sub_list.append(choice(sub_list))
+#     sub_time = get_cum_time(pems_sub_list)
+# high_time = get_cum_time(pems_high_list)
+# while high_time < high_criteria_time:
+#     pems_high_list.append(choice(high_list))
+#     high_time = get_cum_time(pems_high_list)
 
 pems_urban_work = get_cum_work(pems_urban_list)
 pems_sub_work = get_cum_work(pems_sub_list)
