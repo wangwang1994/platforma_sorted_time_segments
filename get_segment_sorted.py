@@ -30,7 +30,7 @@ import random
 from random import choice
 import shutil
 import os
-
+import itertools
 shutil.rmtree('/Users/xuchangmao/Documents/工作/代码/urban')
 shutil.rmtree('/Users/xuchangmao/Documents/工作/代码/sub')
 shutil.rmtree('/Users/xuchangmao/Documents/工作/代码/high')
@@ -234,19 +234,26 @@ sub_time_span_dict=dict(zip(sub_list,sub_time_span))
 sub_list=sorted(sub_time_span_dict, key=lambda k: sub_time_span_dict[k])
 high_time_span_dict=dict(zip(high_list,high_time_span))
 high_list=sorted(high_time_span_dict, key=lambda k: high_time_span_dict[k])
-#这是原来的筛选方式，随机选择，然后补充进去。
-# urban_time = get_cum_time(pems_urban_list)
-# while urban_time < urban_criteria_time:
-#     pems_urban_list.append(choice(urban_list))
-#     urban_time = get_cum_time(pems_urban_list)
-# sub_time = get_cum_time(pems_sub_list)
-# while sub_time < sub_criteria_time:
-#     pems_sub_list.append(choice(sub_list))
-#     sub_time = get_cum_time(pems_sub_list)
-# high_time = get_cum_time(pems_high_list)
-# while high_time < high_criteria_time:
-#     pems_high_list.append(choice(high_list))
-#     high_time = get_cum_time(pems_high_list)
+#排序完成后开始进行选择，
+#选择的方式需要考虑，到这里3个list按照时长进行的排序已经完成了
+#上面的排序是为了方便以后进行特定的片段选择
+#接下来的话可以采用，将每一个list中的元素的所有组合形式都搞出来，然后计算每一个组合的时长，找到最贴合当前区间长度的那个组合方式
+def get_comb_segments(segments_list):
+    '''
+    这个函数是为了得到区间的所有片段的排列组合方式
+    :param segments_list代表传入的区间，如urban_list
+    :return: 输出的是所有可能的排列方式
+    '''
+    all_comb=[]
+    for L in range(1, len(segments_list) + 1):
+        for subset in itertools.combinations(segments_list, L):
+            all_comb.append(subset)
+    return all_comb
+
+urban_list_comb_time=[]
+
+
+
 
 pems_urban_work = get_cum_work(pems_urban_list)
 pems_sub_work = get_cum_work(pems_sub_list)
