@@ -225,13 +225,13 @@ high_list = sorted(high_time_span_dict, key=lambda k: high_time_span_dict[k])
 '''
 从这里开始要进行重复多次的pems拼接工作，拼接的次数由输入来定，用cishu来定义
 '''
-cishu=input('请输入需要进行多少次拼接尝试：')
+cishu=int(input('请输入需要进行多少次拼接尝试：'))
 # 不同区间的比例要求明确的写出来、
-urban_criteria = input('请输入市区比例：')
-sub_criteria = input('请输入市郊比例：')
-high_criteria = input('请输入高速比例：')
+urban_criteria = float(input('请输入市区比例：'))
+sub_criteria = float(input('请输入市郊比例：'))
+high_criteria = float(input('请输入市郊比例：'))
 # 先设定总的时间长度
-criteria_time = input('请输入总时长：')
+criteria_time =float(input('请输入总时长：'))
 # 将最后选择出来参与拼接pems工况的集合定义出来
 
 #开始进行多次循环
