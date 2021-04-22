@@ -37,7 +37,6 @@ raw_test_data = pd.read_excel(
 # 使用前10小时数据进行分析
 test_data = raw_test_data[:360000]
 
-
 # 下面的3个函数都是对片段进行切割的函数
 def group(L):
     '''
@@ -199,33 +198,6 @@ for i in range(len(high_list)):
     filepath3 = '/Users/xuchangmao/Documents/工作/代码/high/'
     plt.savefig(filepath3 + filename3)
     plt.close()
-
-# 将最后选择出来参与拼接pems工况的集合定义出来
-pems_urban_list = []
-pems_sub_list = []
-pems_high_list = []
-total_list = []
-#先随机选择一次
-random_urban_segment = choice(urban_list)
-random_sub_segment = choice(sub_list)
-random_high_segment = choice(high_list)
-#将选择出来的片段放入工况合集中
-pems_urban_list.append(random_urban_segment)
-pems_sub_list.append(random_sub_segment)
-pems_high_list.append(random_high_segment)
-
-total_work = get_cum_work(pems_urban_list) + get_cum_work(pems_sub_list) + get_cum_work(pems_high_list)
-# 这种计算方式是采用，先随机选择一次，然后计算比例，比例少的就再随机选择一次，然后保证总累积功不要超过太多
-# 不同区间的比例要求明确的写出来、
-urban_criteria = 0.33
-sub_criteria = 0.33
-high_criteria = 0.33
-# 先设定总的时间长度
-criteria_time = 1.8
-urban_criteria_time = criteria_time * urban_criteria * 3600
-sub_criteria_time = criteria_time * sub_criteria * 3600
-high_criteria_time = criteria_time * high_criteria * 3600
-
 # 接下来是对选择出来的片段进行排序，按照片段时长从小到大的的顺序进行排序，将片段作为
 # key,将时长作为value，组合成一个dict,然后按照value的值进行排序处理，最后形成时长
 # 从小到大的片段序列。
@@ -250,98 +222,100 @@ sub_time_span_dict = dict(zip(sub_list, sub_time_span))
 sub_list = sorted(sub_time_span_dict, key=lambda k: sub_time_span_dict[k])
 high_time_span_dict = dict(zip(high_list, high_time_span))
 high_list = sorted(high_time_span_dict, key=lambda k: high_time_span_dict[k])
-# 这是原来的筛选方式，随机选择，然后补充进去。
-urban_time = get_cum_time(pems_urban_list)
-while urban_time < urban_criteria_time:
-    pems_urban_list.append(choice(urban_list))
+'''
+从这里开始要进行重复多次的pems拼接工作，拼接的次数由输入来定，用cishu来定义
+'''
+cishu=input('请输入需要进行多少次拼接尝试：')
+# 不同区间的比例要求明确的写出来、
+urban_criteria = input('请输入市区比例：')
+sub_criteria = input('请输入市郊比例：')
+high_criteria = input('请输入高速比例：')
+# 先设定总的时间长度
+criteria_time = input('请输入总时长：')
+# 将最后选择出来参与拼接pems工况的集合定义出来
+
+#开始进行多次循环
+for serial_number in range(cishu):
+    pems_urban_list = []
+    pems_sub_list = []
+    pems_high_list = []
+    total_list = []
+    #先随机选择一次
+    random_urban_segment = choice(urban_list)
+    random_sub_segment = choice(sub_list)
+    random_high_segment = choice(high_list)
+    #将选择出来的片段放入工况合集中
+    pems_urban_list.append(random_urban_segment)
+    pems_sub_list.append(random_sub_segment)
+    pems_high_list.append(random_high_segment)
+
+    total_work = get_cum_work(pems_urban_list) + get_cum_work(pems_sub_list) + get_cum_work(pems_high_list)
+    # 这种计算方式是采用，先随机选择一次，然后计算比例，比例少的就再随机选择一次，然后保证总累积功不要超过太多
+
+    urban_criteria_time = criteria_time * urban_criteria * 3600
+    sub_criteria_time = criteria_time * sub_criteria * 3600
+    high_criteria_time = criteria_time * high_criteria * 3600
+
+
+    # 这是原来的筛选方式，随机选择，然后补充进去。
     urban_time = get_cum_time(pems_urban_list)
-sub_time = get_cum_time(pems_sub_list)
-while sub_time < sub_criteria_time:
-    pems_sub_list.append(choice(sub_list))
+    while urban_time < urban_criteria_time:
+        pems_urban_list.append(choice(urban_list))
+        urban_time = get_cum_time(pems_urban_list)
     sub_time = get_cum_time(pems_sub_list)
-high_time = get_cum_time(pems_high_list)
-while high_time < high_criteria_time:
-    pems_high_list.append(choice(high_list))
+    while sub_time < sub_criteria_time:
+        pems_sub_list.append(choice(sub_list))
+        sub_time = get_cum_time(pems_sub_list)
     high_time = get_cum_time(pems_high_list)
+    while high_time < high_criteria_time:
+        pems_high_list.append(choice(high_list))
+        high_time = get_cum_time(pems_high_list)
 
-pems_urban_work = get_cum_work(pems_urban_list)
-pems_sub_work = get_cum_work(pems_sub_list)
-pems_high_work = get_cum_work(pems_high_list)
-total_pems_work = pems_urban_work + pems_sub_work + pems_high_work
+    pems_urban_work = get_cum_work(pems_urban_list)
+    pems_sub_work = get_cum_work(pems_sub_list)
+    pems_high_work = get_cum_work(pems_high_list)
+    total_pems_work = pems_urban_work + pems_sub_work + pems_high_work
 
-pems_urban_ratio = pems_urban_work / total_pems_work
-pems_sub_ratio = pems_sub_work / total_pems_work
-pems_high_ratio = pems_high_work / total_pems_work
+    pems_urban_ratio = pems_urban_work / total_pems_work
+    pems_sub_ratio = pems_sub_work / total_pems_work
+    pems_high_ratio = pems_high_work / total_pems_work
 
-print('3段行程的累计功分别为：（kw*h）')
-print(round(pems_urban_work, 2))
-print(round(pems_sub_work, 2))
-print(round(pems_high_work, 2))
+    print('3段行程的累计功分别为：（kw*h）')
+    print(round(pems_urban_work, 2))
+    print(round(pems_sub_work, 2))
+    print(round(pems_high_work, 2))
 
-print('3段行程的功率占比分别为：')
-print('市区功率占比：' + str(round(pems_urban_ratio * 100, 2)) + '%')
-print('市郊功率占比：' + str(round(pems_sub_ratio * 100, 2)) + '%')
-print('高速功率占比：' + str(round(pems_high_ratio * 100, 2)) + '%')
+    print('3段行程的功率占比分别为：')
+    print('市区功率占比：' + str(round(pems_urban_ratio * 100, 2)) + '%')
+    print('市郊功率占比：' + str(round(pems_sub_ratio * 100, 2)) + '%')
+    print('高速功率占比：' + str(round(pems_high_ratio * 100, 2)) + '%')
 
-total_time = get_cum_time(pems_urban_list) + get_cum_time(pems_sub_list) + get_cum_time(pems_high_list)
-pems_urban_ratio_time = get_cum_time(pems_urban_list) / total_time
-pems_sub_ratio_time = get_cum_time(pems_sub_list) / total_time
-pems_high_ratio_time = get_cum_time(pems_high_list) / total_time
-print('3段行程的时间占比分别为：')
-print('市区时间占比：' + str(round(pems_urban_ratio_time * 100, 2)) + '%')
-print('市郊时间占比：' + str(round(pems_sub_ratio_time * 100, 2)) + '%')
-print('高速时间占比：' + str(round(pems_high_ratio_time * 100, 2)) + '%')
-# print('3段行程的区间分别为：')
-# print('市区片段')
-# print(pems_urban_list)
-# print('市郊片段')
-# print(pems_sub_list)
-# print('高速片段')
-# print(pems_high_list)
-pems_cycle_list = pems_urban_list + pems_sub_list + pems_high_list
+    total_time = get_cum_time(pems_urban_list) + get_cum_time(pems_sub_list) + get_cum_time(pems_high_list)
+    pems_urban_ratio_time = get_cum_time(pems_urban_list) / total_time
+    pems_sub_ratio_time = get_cum_time(pems_sub_list) / total_time
+    pems_high_ratio_time = get_cum_time(pems_high_list) / total_time
+    print('3段行程的时间占比分别为：')
+    print('市区时间占比：' + str(round(pems_urban_ratio_time * 100, 2)) + '%')
+    print('市郊时间占比：' + str(round(pems_sub_ratio_time * 100, 2)) + '%')
+    print('高速时间占比：' + str(round(pems_high_ratio_time * 100, 2)) + '%')
+    pems_cycle_list = pems_urban_list + pems_sub_list + pems_high_list
 
-# 保存选择出来的片段，不仅有分区间的，还有总体的
-for i in range(len(pems_urban_list)):
-    plt.plot(test_data['车速'][pems_urban_list[i][0]:pems_urban_list[i][1]])
+# 保存选择出来的片段,仅仅保留总的pems工况的情况
+
+
+    pems_cycle_pd_list = []
+    for segment in pems_cycle_list:
+        pems_cycle_pd_list.append(test_data[segment[0]:segment[1]])
+    pems_cycle_pd = pd.concat(pems_cycle_pd_list)
+    pems_cycle_pd = pems_cycle_pd.reset_index(drop=True)
+    plt.plot(pems_cycle_pd['车速'])
     plt.xlabel('time')
     plt.ylabel('vehicle speed')
-    plt.title('Urban ' + str(i) + 'th segment')
-    pems_filename1 = str(i) + 'th segment' + '.png'
-    pems_filepath1 = '/Users/xuchangmao/Documents/工作/代码/pems_urban/'
-    plt.savefig(pems_filepath1 + pems_filename1)
+    plt.title(str(serial_number)+'th '+'PEMS Cycle')
+    plt.savefig('/Users/xuchangmao/Documents/工作/代码/pems_cycles/'+str(serial_number)+'th '+'pems_cycle.png')
     plt.close()
-for i in range(len(pems_sub_list)):
-    plt.plot(test_data['车速'][pems_sub_list[i][0]:pems_sub_list[i][1]])
-    plt.xlabel('time')
-    plt.ylabel('vehicle speed')
-    plt.title('Sub ' + str(i) + 'th segment')
-    pems_filename2 = str(i) + 'th segment' + '.png'
-    pems_filepath2 = '/Users/xuchangmao/Documents/工作/代码/pems_sub/'
-    plt.savefig(pems_filepath2 + pems_filename2)
-    plt.close()
-for i in range(len(pems_high_list)):
-    plt.plot(test_data['车速'][pems_high_list[i][0]:pems_high_list[i][1]])
-    plt.xlabel('time')
-    plt.ylabel('vehicle speed')
-    plt.title('High ' + str(i) + 'th segment')
-    pems_filename3 = str(i) + 'th segment' + '.png'
-    pems_filepath3 = '/Users/xuchangmao/Documents/工作/代码/pems_high/'
-    plt.savefig(pems_filepath3 + pems_filename3)
-    plt.close()
-
-pems_cycle_pd_list = []
-for segment in pems_cycle_list:
-    pems_cycle_pd_list.append(test_data[segment[0]:segment[1]])
-pems_cycle_pd = pd.concat(pems_cycle_pd_list)
-pems_cycle_pd = pems_cycle_pd.reset_index(drop=True)
-plt.plot(pems_cycle_pd['车速'])
-plt.xlabel('time')
-plt.ylabel('vehicle speed')
-plt.title('PEMS Cycle')
-plt.savefig('/Users/xuchangmao/Documents/工作/代码/pems_cycles/pems_cycle.png')
-plt.close()
-outpath = '/Users/xuchangmao/Documents/工作/代码/pems_cycles/pems_data.csv'
-pems_cycle_pd.to_csv(outpath, sep=',', index=False)
+    outpath = '/Users/xuchangmao/Documents/工作/代码/pems_cycles/'+str(serial_number)+'th '+'pems_data.csv'
+    pems_cycle_pd.to_csv(outpath, sep=',', index=False)
 
 # 计算一下每个区间的片段的时间长度
 def get_segment_time_span(segments_list):
@@ -358,15 +332,15 @@ def get_segments_max_speed(segments_list):
     return max_speed
 
 # 下面是3个区间的信息，包括时间长度和最高速度
-urban_segments_pd = pd.DataFrame(urban_list)
-urban_time_span = get_segment_time_span(urban_list)
-urban_segments_pd['time_span'] = urban_time_span
-urban_segments_pd['top speed'] = get_segments_max_speed(urban_list)
-sub_segments_pd = pd.DataFrame(sub_list)
-sub_time_span = get_segment_time_span(sub_list)
-sub_segments_pd['time_span'] = sub_time_span
-sub_segments_pd['top speed'] = get_segments_max_speed(sub_list)
-high_segments_pd = pd.DataFrame(high_list)
-high_time_span = get_segment_time_span(high_list)
-high_segments_pd['time_span'] = high_time_span
-high_segments_pd['top speed'] = get_segments_max_speed(high_list)
+    urban_segments_pd = pd.DataFrame(urban_list)
+    urban_time_span = get_segment_time_span(urban_list)
+    urban_segments_pd['time_span'] = urban_time_span
+    urban_segments_pd['top speed'] = get_segments_max_speed(urban_list)
+    sub_segments_pd = pd.DataFrame(sub_list)
+    sub_time_span = get_segment_time_span(sub_list)
+    sub_segments_pd['time_span'] = sub_time_span
+    sub_segments_pd['top speed'] = get_segments_max_speed(sub_list)
+    high_segments_pd = pd.DataFrame(high_list)
+    high_time_span = get_segment_time_span(high_list)
+    high_segments_pd['time_span'] = high_time_span
+    high_segments_pd['top speed'] = get_segments_max_speed(high_list)
