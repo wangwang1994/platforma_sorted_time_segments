@@ -251,7 +251,7 @@ pems_sub_time_ratio_list=[]
 pems_high_time_ratio_list=[]
 
 
-
+num=0
 for serial_number in range(cishu):
     pems_urban_list = []
     pems_sub_list = []
@@ -304,14 +304,12 @@ for serial_number in range(cishu):
     pems_urban_ratio_time = pems_urban_time/ total_time
     pems_sub_ratio_time = pems_sub_time / total_time
     pems_high_ratio_time = pems_high_time / total_time
+
     if pems_urban_ratio_time>urban_criteria+0.05 or pems_urban_ratio_time<urban_criteria-0.05:
-        pems_urban_list=[]
         continue
     if pems_sub_ratio_time>sub_criteria+0.05 or pems_sub_ratio_time<sub_criteria-0.05:
-        pems_sub_list=[]
         continue
     if pems_high_ratio_time>high_criteria+0.05 or pems_high_ratio_time<high_criteria-0.05:
-        pems_high_list
         continue
     pems_urban_work_list.append(round(pems_urban_work, 2))
     pems_sub_work_list.append(round(pems_sub_work, 2))
@@ -325,6 +323,7 @@ for serial_number in range(cishu):
     pems_sub_time_ratio_list.append(round(pems_sub_ratio_time * 100, 2))
     pems_high_time_ratio_list.append(round(pems_high_ratio_time * 100, 2))
 # 保存选择出来的片段,仅仅保留总的pems工况的情况
+    num+=1
     pems_cycle_list = pems_urban_list + pems_sub_list + pems_high_list
     pems_cycle_pd_list = []
     for segment in pems_cycle_list:
@@ -335,9 +334,9 @@ for serial_number in range(cishu):
     plt.xlabel('time')
     plt.ylabel('vehicle speed')
     plt.title(str(serial_number)+'th '+'PEMS Cycle')
-    plt.savefig('/Users/xuchangmao/Documents/工作/代码/pems_cycles/'+str(serial_number)+'th '+'pems_cycle.png')
+    plt.savefig('/Users/xuchangmao/Documents/工作/代码/pems_cycles/'+str(num)+'th '+'pems_cycle.png')
     plt.close()
-    outpath = '/Users/xuchangmao/Documents/工作/代码/pems_cycles/'+str(serial_number)+'th '+'pems_data.csv'
+    outpath = '/Users/xuchangmao/Documents/工作/代码/pems_cycles/'+str(num)+'th '+'pems_data.csv'
     pems_cycle_pd.to_csv(outpath, sep=',', index=False)
 
 # 计算一下每个区间的片段的时间长度
