@@ -233,8 +233,25 @@ high_criteria = float(input('请输入市郊比例：'))
 # 先设定总的时间长度
 criteria_time =float(input('请输入总时长：'))
 # 将最后选择出来参与拼接pems工况的集合定义出来
+'''
+开始进行多次循环
+循环开始之前，将pems_urban,pems_sub等信息用列表定义出来，每进行一次拼接，就将该次拼接后的情况添加
+包括，市区累积功，市郊累积功，高速累积功，总累积功，市区时长，市郊时长，高速时长，总时长
+'''
+pems_urban_work_list=[]
+pems_sub_work_list=[]
+pems_high_work_list=[]
+pems_total_work_list=[]
+pems_urban_time_list=[]
+pems_sub_time_list=[]
+pems_high_time_list=[]
+pems_total_time_list=[]
+pems_urban_time_ratio_list=[]
+pems_sub_time_ratio_list=[]
+pems_high_time_ratio_list=[]
 
-#开始进行多次循环
+
+
 for serial_number in range(cishu):
     pems_urban_list = []
     pems_sub_list = []
@@ -280,29 +297,39 @@ for serial_number in range(cishu):
     pems_sub_ratio = pems_sub_work / total_pems_work
     pems_high_ratio = pems_high_work / total_pems_work
 
-    print('3段行程的累计功分别为：（kw*h）')
-    print(round(pems_urban_work, 2))
-    print(round(pems_sub_work, 2))
-    print(round(pems_high_work, 2))
+    # print('3段行程的累计功分别为：（kw*h）')
+    # print(round(pems_urban_work, 2))
+    # print(round(pems_sub_work, 2))
+    # print(round(pems_high_work, 2))
 
-    print('3段行程的功率占比分别为：')
-    print('市区功率占比：' + str(round(pems_urban_ratio * 100, 2)) + '%')
-    print('市郊功率占比：' + str(round(pems_sub_ratio * 100, 2)) + '%')
-    print('高速功率占比：' + str(round(pems_high_ratio * 100, 2)) + '%')
-
-    total_time = get_cum_time(pems_urban_list) + get_cum_time(pems_sub_list) + get_cum_time(pems_high_list)
-    pems_urban_ratio_time = get_cum_time(pems_urban_list) / total_time
-    pems_sub_ratio_time = get_cum_time(pems_sub_list) / total_time
-    pems_high_ratio_time = get_cum_time(pems_high_list) / total_time
-    print('3段行程的时间占比分别为：')
-    print('市区时间占比：' + str(round(pems_urban_ratio_time * 100, 2)) + '%')
-    print('市郊时间占比：' + str(round(pems_sub_ratio_time * 100, 2)) + '%')
-    print('高速时间占比：' + str(round(pems_high_ratio_time * 100, 2)) + '%')
-    pems_cycle_list = pems_urban_list + pems_sub_list + pems_high_list
-
+    # print('3段行程的功率占比分别为：')
+    # print('市区功率占比：' + str(round(pems_urban_ratio * 100, 2)) + '%')
+    # print('市郊功率占比：' + str(round(pems_sub_ratio * 100, 2)) + '%')
+    # print('高速功率占比：' + str(round(pems_high_ratio * 100, 2)) + '%')
+    pems_urban_time=get_cum_time(pems_urban_list)
+    pems_sub_time=get_cum_time(pems_sub_list)
+    pems_high_time=get_cum_time(pems_high_list)
+    total_time = pems_urban_time + pems_sub_time + pems_high_time
+    pems_urban_ratio_time = pems_urban_time/ total_time
+    pems_sub_ratio_time = pems_sub_time / total_time
+    pems_high_ratio_time = pems_high_time / total_time
+    # print('3段行程的时间占比分别为：')
+    # print('市区时间占比：' + str(round(pems_urban_ratio_time * 100, 2)) + '%')
+    # print('市郊时间占比：' + str(round(pems_sub_ratio_time * 100, 2)) + '%')
+    # print('高速时间占比：' + str(round(pems_high_ratio_time * 100, 2)) + '%')
+    pems_urban_work_list.append(round(pems_urban_work, 2))
+    pems_sub_work_list.append(round(pems_sub_work, 2))
+    pems_high_work_list.append(round(pems_high_work, 2))
+    pems_total_work_list.append(round(pems_urban_work, 2)+round(pems_sub_work, 2)+round(pems_high_ratio_time * 100, 2))
+    pems_urban_time_list.append(pems_urban_time)
+    pems_sub_time_list.append(pems_sub_time)
+    pems_high_time_list.append(pems_high_time)
+    pems_total_time_list.append(total_time)
+    pems_urban_time_ratio_list.append(round(pems_urban_ratio_time * 100, 2))
+    pems_sub_time_ratio_list.append(round(pems_sub_ratio_time * 100, 2))
+    pems_high_time_ratio_list.append(round(pems_high_ratio_time * 100, 2))
 # 保存选择出来的片段,仅仅保留总的pems工况的情况
-
-
+    pems_cycle_list = pems_urban_list + pems_sub_list + pems_high_list
     pems_cycle_pd_list = []
     for segment in pems_cycle_list:
         pems_cycle_pd_list.append(test_data[segment[0]:segment[1]])
@@ -344,3 +371,15 @@ def get_segments_max_speed(segments_list):
     high_time_span = get_segment_time_span(high_list)
     high_segments_pd['time_span'] = high_time_span
     high_segments_pd['top speed'] = get_segments_max_speed(high_list)
+info_data={
+    '市区累积功':pems_urban_work_list,
+    '市郊累积功':pems_sub_work_list,
+    '高速累积功':pems_high_work_list,
+    '总累积功':pems_total_work_list,
+    '市区时长':pems_urban_time_list,
+    '市郊时长': pems_sub_time_list,
+    '高速时长': pems_high_time_list,
+    '总时长': pems_total_time_list,
+}
+info_data_pd=pd.DataFrame(info_data)
+info_data_pd.to_csv('/Users/xuchangmao/Documents/工作/代码/pems_cycles/拼接工况数据.csv')
