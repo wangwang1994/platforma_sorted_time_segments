@@ -297,15 +297,6 @@ for serial_number in range(cishu):
     pems_sub_ratio = pems_sub_work / total_pems_work
     pems_high_ratio = pems_high_work / total_pems_work
 
-    # print('3段行程的累计功分别为：（kw*h）')
-    # print(round(pems_urban_work, 2))
-    # print(round(pems_sub_work, 2))
-    # print(round(pems_high_work, 2))
-
-    # print('3段行程的功率占比分别为：')
-    # print('市区功率占比：' + str(round(pems_urban_ratio * 100, 2)) + '%')
-    # print('市郊功率占比：' + str(round(pems_sub_ratio * 100, 2)) + '%')
-    # print('高速功率占比：' + str(round(pems_high_ratio * 100, 2)) + '%')
     pems_urban_time=get_cum_time(pems_urban_list)
     pems_sub_time=get_cum_time(pems_sub_list)
     pems_high_time=get_cum_time(pems_high_list)
@@ -313,10 +304,15 @@ for serial_number in range(cishu):
     pems_urban_ratio_time = pems_urban_time/ total_time
     pems_sub_ratio_time = pems_sub_time / total_time
     pems_high_ratio_time = pems_high_time / total_time
-    # print('3段行程的时间占比分别为：')
-    # print('市区时间占比：' + str(round(pems_urban_ratio_time * 100, 2)) + '%')
-    # print('市郊时间占比：' + str(round(pems_sub_ratio_time * 100, 2)) + '%')
-    # print('高速时间占比：' + str(round(pems_high_ratio_time * 100, 2)) + '%')
+    if pems_urban_ratio_time>urban_criteria+0.05 or pems_urban_ratio_time<urban_criteria-0.05:
+        pems_urban_list=[]
+        continue
+    if pems_sub_ratio_time>sub_criteria+0.05 or pems_sub_ratio_time<sub_criteria-0.05:
+        pems_sub_list=[]
+        continue
+    if pems_high_ratio_time>high_criteria+0.05 or pems_high_ratio_time<high_criteria-0.05:
+        pems_high_list
+        continue
     pems_urban_work_list.append(round(pems_urban_work, 2))
     pems_sub_work_list.append(round(pems_sub_work, 2))
     pems_high_work_list.append(round(pems_high_work, 2))
@@ -380,6 +376,9 @@ info_data={
     '市郊时长': pems_sub_time_list,
     '高速时长': pems_high_time_list,
     '总时长': pems_total_time_list,
+    '市区时长比例':pems_urban_time_ratio_list,
+    '市郊时长比例': pems_sub_time_ratio_list,
+    '高速时长比例': pems_high_time_ratio_list,
 }
 info_data_pd=pd.DataFrame(info_data)
 info_data_pd.to_csv('/Users/xuchangmao/Documents/工作/代码/pems_cycles/拼接工况数据.csv')
