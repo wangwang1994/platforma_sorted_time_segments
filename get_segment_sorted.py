@@ -93,19 +93,16 @@ urban_list = []
 sub_list = []
 high_list = []
 
-
 # 水温的筛选函数
 def water_temp(segment_tuple):
     for i in range(segment_tuple[0], segment_tuple[1]):
         if test_data['发动机冷却液温度'][i] < 70:
             return True
 
-
 # 将速度明显较低的短行程片段筛除
 def urban_list_filter(segment_tuple):
     if test_data['车速'][segment_tuple[0]:segment_tuple[1]].max() < 5:
         return True
-
 
 def filter_segments(segments):
     '''
@@ -141,7 +138,6 @@ x = index / 3600  # 构造一个等差数列数组，作为横轴取值，单位
 integrals = []
 for i in range(len(y)):  # 计算梯形的面积，面积其实就是所作的功，由于是累加，所以是切片"i+1"
     integrals.append(scipy.integrate.trapz(y[:i + 1], x[:i + 1]))
-
 
 # integrals里面存储的是所有的累积功，而cal_w里面存储的是单点的功值
 
@@ -345,7 +341,7 @@ while num < cishu:
     plt.plot(pems_cycle_pd['车速'])
     plt.xlabel('time')
     plt.ylabel('vehicle speed')
-    plt.title(str(serial_number) + 'th ' + 'PEMS Cycle')
+    plt.title(str(num) + 'th ' + 'PEMS Cycle')
     plt.savefig('/Users/xuchangmao/Documents/工作/代码/pems_cycles/' + str(num) + 'th ' + 'pems_cycle.png')
     plt.close()
     outpath = '/Users/xuchangmao/Documents/工作/代码/pems_cycles/' + str(num) + 'th ' + 'pems_data.csv'

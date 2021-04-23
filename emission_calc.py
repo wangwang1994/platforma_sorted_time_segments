@@ -19,10 +19,9 @@ import matplotlib.pyplot as plt  # 用于画图
 import pandas as pd
 
 max_power = 120
-whole_windows = 0
-windows = []
-windows_eff = []
+
 average_emission = []
+windows_eff = []
 
 
 def get_single_window(start, integrals):
@@ -35,10 +34,12 @@ def get_single_window(start, integrals):
             if cal_w_np[start:i].mean() > 0.2 * max_power:
                 windows.append((start, i))
             break
-    return windows
+    return windows, whole_windows
 
 
-for j in range(1, 48):
+for j in range(0, 100):
+    windows = []
+    whole_windows=0
     print('-----进行第' + str(j) + '组数据处理-----')
     raw_test_data = pd.read_csv(r'/Users/xuchangmao/Documents/工作/代码/pems_cycles/' + str(j) + 'th pems_data.csv')
     # 导入数据
@@ -74,7 +75,7 @@ for j in range(1, 48):
     # plt.show()
     print('----------累积功计算完成------------')
     for i in range(0, 14400):
-        get_single_window(i, integrals)
+        windows, whole_windows = get_single_window(i, integrals)
     test_data['发动机燃料流量'] = test_data['发动机燃料流量'].replace('无效', 0)
     test_data['发动机燃料流量'] = test_data['发动机燃料流量'].astype(float)
     print('----------窗口搜寻完成------------')
@@ -85,6 +86,7 @@ for j in range(1, 48):
     nox_conc = test_data['SCR下游NOx传感器输出'].replace('无效', 0)
     nox_conc = nox_conc.astype(float)
     nox_emission_list = []
+
     for k, m in windows:
         nox_emission = 0.001587 * (nox_conc[k:m] * total_mass_flow).sum()
         nox_emission_list.append(nox_emission)
