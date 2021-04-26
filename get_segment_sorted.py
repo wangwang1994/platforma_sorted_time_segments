@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed Apr  7 08:25:15 2021
-
 @author: xuchangmao
 """
 import numpy as np
@@ -16,6 +15,7 @@ import os
 
 '''
 每次运行前先删除上次的结果，然后重新创建文件夹来存储本次运行结果
+可以自己改一下文件路径，一共要有7个文件夹，分别是存储市区、市郊和高速的原始片段，pems工况的市区、市郊和高速片段，及最终的pems片段
 '''
 shutil.rmtree('/Users/xuchangmao/Documents/工作/代码/urban')
 shutil.rmtree('/Users/xuchangmao/Documents/工作/代码/sub')
@@ -33,7 +33,7 @@ os.mkdir('/Users/xuchangmao/Documents/工作/代码/pems_high')
 os.mkdir('/Users/xuchangmao/Documents/工作/代码/pems_cycles')
 # 读取文件
 raw_test_data = pd.read_excel(
-    r'/Users/xuchangmao/Documents/工作/平台数据/6台国六-10月15-20日的数据/LFNG4HC90LTY00157（15-20.）.xlsx')
+    r'/Users/xuchangmao/Documents/工作/平台数据/6台国六-10月15-20日的数据/LFNA4MJB4LTB12637（15-20）.xlsx')
 # 使用前10小时数据进行分析
 test_data = raw_test_data[:360000]
 
