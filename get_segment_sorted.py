@@ -277,7 +277,7 @@ while num < cishu:
     # 这是原来的筛选方式，随机选择，然后补充进去。
     urban_time = get_cum_time(pems_urban_list)
     while urban_time < urban_criteria_time:
-        pems_urban_list.append(choice(urban_list))
+        pems_urban_list.append(choice(urban_list[:int(0.5*len(urban_list))]))
         urban_time = get_cum_time(pems_urban_list)
     sub_time = get_cum_time(pems_sub_list)
     while sub_time < sub_criteria_time:
