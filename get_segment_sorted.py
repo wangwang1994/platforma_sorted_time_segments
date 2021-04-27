@@ -33,7 +33,7 @@ os.mkdir('/Users/xuchangmao/Documents/工作/代码/pems_high')
 os.mkdir('/Users/xuchangmao/Documents/工作/代码/pems_cycles')
 # 读取文件
 raw_test_data = pd.read_excel(
-    r'/Users/xuchangmao/Documents/工作/平台数据/6台国六-10月15-20日的数据/LFNA4MJB4LTB12637（15-20）.xlsx')
+    r'/Users/xuchangmao/Documents/工作/平台数据/6台国六-10月15-20日的数据/LFNG4HC90LTY00157（15-20.）.xlsx')
 # 使用前10小时数据进行分析
 test_data = raw_test_data[:360000]
 
@@ -55,7 +55,6 @@ def group(L):
             first = last = n
     yield first, last
 
-
 def get_segments(vehicle_speed):
     '''
     采用nonzero函数，来得到全部非零的片段
@@ -67,7 +66,6 @@ def get_segments(vehicle_speed):
     nonzero_list = list(nonzero_index[0])
     segments_group = list(group(nonzero_list))
     return segments_group
-
 
 def re_get_segments(raw_segments):
     '''
@@ -83,7 +81,6 @@ def re_get_segments(raw_segments):
             new_segments.append((raw_segments[i][-1], raw_segments[i + 1][-1]))
         continue
     return new_segments
-
 
 '''
 接下来是对不同平均速度的区间进行筛选，分到不同的列表中
@@ -120,7 +117,6 @@ def filter_segments(segments):
         if average_speed < 45 and test_data['车速'][segment[0]:segment[1]].max() < 55:
             urban_list.append(segment)
 
-
 # 下面的两个sum_work是1型试验中的whtc循环的功，而max_torque是最大的扭矩，也就是扭矩百分比的计算依据
 sum_work = 66
 max_torque = 600
@@ -150,7 +146,6 @@ def get_cum_work(segments_list):
         segments_list_cum_work = segments_list_cum_work + integrals[segment[1]] - integrals[segment[0]]
     return segments_list_cum_work
 
-
 # 要创建一个函数用来计算一个含有不同的segments的时间总和是多少。
 def get_cum_time(segments_list):
     '''
@@ -160,7 +155,6 @@ def get_cum_time(segments_list):
     for segment in segments_list:
         segments_list_cum_time = segments_list_cum_time + segment[1] - segment[0]
     return segments_list_cum_time
-
 
 # 接下来是对3个list中的行程片段进行选择，累积功只要没超过限制那么就一直累加，采用random的形式进行选择
 # 首先先定一个值，这个值就是循环功的3分之1
@@ -263,8 +257,8 @@ while num < cishu:
     pems_sub_list = []
     pems_high_list = []
     total_list = []
-    # 先随机选择一次
-    random_urban_segment = choice(urban_list)
+    # 这里选择方式是对市区进行研究，将更多较短的行程选择进入最终的pems片段中
+    random_urban_segment = choice(urban_list[:int(0.5*len(urban_list))])
     random_sub_segment = choice(sub_list)
     random_high_segment = choice(high_list)
     # 将选择出来的片段放入工况合集中
